@@ -13,7 +13,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
                     sh 'cp $YAML_FILE src/main/resources/application.yml'
                 }
-                sh './mvnw install -DskipTests'
+                sh 'docker-compose build'
             }
         }
         stage('Run') {
