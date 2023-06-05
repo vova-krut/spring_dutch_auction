@@ -9,7 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Building.."
-                sh 'systemctl start docker'
+                sh 'service docker start'
                 withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
                     sh 'cp $YAML_FILE src/main/resources/application.yml'
                 }
