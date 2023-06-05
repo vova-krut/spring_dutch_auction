@@ -18,7 +18,7 @@ pipeline {
         stage('Run') {
             steps {
                 echo "Running.."
-                sh 'docker-compose up -v /var/run/docker.sock:/var/run/docker.sock'
+                sh 'docker-compose up'
             }
         }
     }
