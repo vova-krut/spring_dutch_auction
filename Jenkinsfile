@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo "Building.."
                 withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
-                    sh 'cp $YAML_FILE src/main/resources/application.yml'
+                    sh 'sudo cp $YAML_FILE src/main/resources/application.yml'
                 }
                 sh 'sudo docker compose build'
             }
