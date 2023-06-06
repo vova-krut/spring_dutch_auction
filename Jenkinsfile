@@ -6,6 +6,13 @@ pipeline {
     }
     triggers { pollSCM '* * * * *' }
     stages {
+        stage('Clone repo') {
+            steps {
+                echo 'Cloning...'
+                sh 'git clone https://github.com/vova-krut/spring_dutch_auction'
+                sh 'cd spring_dutch_auction'
+            }
+        }
         stage('Build') {
             steps {
                 echo "Building.."
