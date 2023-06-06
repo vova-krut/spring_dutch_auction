@@ -2,17 +2,11 @@ pipeline {
     agent {
         docker {
             image 'vovakrut/java-docker'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
     triggers { pollSCM '* * * * *' }
     stages {
-        stage('Clone repo') {
-            steps {
-                echo 'Cloning...'
-                sh 'git clone https://github.com/vova-krut/spring_dutch_auction'
-                sh 'cd spring_dutch_auction'
-            }
-        }
         stage('Build') {
             steps {
                 echo "Building.."
