@@ -7,19 +7,29 @@ pipeline {
     }
     triggers { pollSCM '* * * * *' }
     stages {
+        stage('Copy configuration file') {
+            echo 'Copying application.yml...'
+            withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
+                sh 'cp $YAML_FILE src/main/resources/application.yml'
+            }
+        }
         stage('Build') {
             steps {
                 echo "Building.."
-                withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
-                    sh 'cp $YAML_FILE src/main/resources/application.yml'
-                }
-                sh 'docker compose build'
+                sh './mvnw install -DskipTests'
             }
         }
         stage('Run') {
             steps {
                 echo "Running.."
-                sh 'docker compose up'
+                sh 'docker compose up --rm'
+            }
+        }
+        post {
+            always {
+                sh 'docker compose down'
+                sh 'docker compose rm -f'
+                sh 'docker volume rm $(docker volume ls -q --filter dangling=true)'
             }
         }
     }
