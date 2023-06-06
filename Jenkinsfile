@@ -8,9 +8,11 @@ pipeline {
     triggers { pollSCM '* * * * *' }
     stages {
         stage('Copy configuration file') {
-            echo 'Copying application.yml...'
-            withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
-                sh 'cp $YAML_FILE src/main/resources/application.yml'
+            steps {
+                echo 'Copying application.yml...'
+                withCredentials([file(credentialsId: 'dutch_auction_properties', variable: 'YAML_FILE')]) {
+                    sh 'cp $YAML_FILE src/main/resources/application.yml'
+                }
             }
         }
         stage('Build') {
