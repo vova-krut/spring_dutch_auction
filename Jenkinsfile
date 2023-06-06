@@ -27,12 +27,12 @@ pipeline {
                 sh 'docker compose up --rm'
             }
         }
-        post {
-            always {
-                sh 'docker compose down'
-                sh 'docker compose rm -f'
-                sh 'docker volume rm $(docker volume ls -q --filter dangling=true)'
-            }
+    }
+    post {
+        always {
+            sh 'docker compose down'
+            sh 'docker compose rm -f'
+            sh 'docker volume rm $(docker volume ls -q --filter dangling=true)'
         }
     }
 }
