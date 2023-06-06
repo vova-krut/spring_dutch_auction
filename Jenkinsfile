@@ -24,7 +24,7 @@ pipeline {
         stage('Run') {
             steps {
                 echo "Running.."
-                sh 'docker compose up --rm'
+                sh 'docker compose up'
             }
         }
     }
@@ -32,7 +32,6 @@ pipeline {
         always {
             sh 'docker compose down'
             sh 'docker compose rm -f'
-            sh 'docker volume rm $(docker volume ls -q --filter dangling=true)'
         }
     }
 }
