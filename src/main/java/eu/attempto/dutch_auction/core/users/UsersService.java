@@ -33,8 +33,8 @@ public class UsersService {
     return usersRepository.findByEmail(email);
   }
 
-  public User createUser(User user, Boolean admin) {
-    var role = rolesService.getRole(admin ? RolesEnum.Admin : RolesEnum.User);
+  public User createUser(User user, boolean admin) {
+    var role = rolesService.getRole(admin ? RolesEnum.ADMIN : RolesEnum.USER);
 
     user.setRole(role);
     return usersRepository.save(user);

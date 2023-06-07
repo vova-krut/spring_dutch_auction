@@ -2,6 +2,9 @@ package eu.attempto.dutch_auction.files;
 
 import eu.attempto.dutch_auction.exceptions.BadRequestException;
 import eu.attempto.dutch_auction.exceptions.InternalServerException;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +15,10 @@ import java.util.Arrays;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class FilesService {
+  private final Logger logger = LoggerFactory.getLogger(FilesService.class);
+
   @Value("${upload.path}")
   private String uploadPath;
 
@@ -24,19 +30,22 @@ public class FilesService {
 
     try {
       var uploadDir = new File(uploadPath);
-      System.out.println(uploadDir.getAbsolutePath());
       if (!uploadDir.exists()) {
         uploadDir.mkdirs(); // Use mkdirs() to create parent directories if necessary
       }
 
-      var imageName = UUID.randomUUID() + getFileExtension(image.getOriginalFilename());
+      var originalFileName = image.getOriginalFilename();
+      if (originalFileName == null) {
+        throw new InternalServerException("Error while writing a file");
+      }
+
+      var imageName = UUID.randomUUID() + getFileExtension(originalFileName);
       var imagePath = uploadDir.getAbsolutePath() + File.separator + imageName;
       image.transferTo(new File(imagePath));
 
-      System.out.println(imagePath);
       return host + imageName;
     } catch (IOException e) {
-      System.out.println(e.getMessage());
+      logger.error(e.getMessage());
       throw new InternalServerException("Error while writing a file");
     }
   }
