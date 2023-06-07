@@ -26,14 +26,14 @@ public class BidsService {
   private final SchedulesService schedulesService;
   private final EventsService eventsService;
 
-  private final BigDecimal BID_PRICE = new BigDecimal(1);
+  private final BigDecimal bidPrice = new BigDecimal(1);
 
   public String placeBid(Authentication authentication, PlaceBidDto placeBidDto) {
     var auction = auctionsService.getAuctionById(placeBidDto.getAuctionId());
     var user = (User) authentication.getPrincipal();
 
     validateBid(user, auction);
-    schedulesService.removeAuctionSchedule(auction.getId(), ScheduleType.Finish);
+    schedulesService.removeAuctionSchedule(auction.getId(), ScheduleType.FINISH);
 
     var bid = Bid.builder().user(user).auction(auction).build();
 
@@ -60,7 +60,7 @@ public class BidsService {
       throw new BadRequestException("You can't bid on your own auction");
     }
 
-    BigDecimal comparisonValue = auction.getPrice().multiply(new BigDecimal(2)).add(BID_PRICE);
+    BigDecimal comparisonValue = auction.getPrice().multiply(new BigDecimal(2)).add(bidPrice);
 
     if (user.getBalance().compareTo(comparisonValue) < 0) {
       throw new BadRequestException(
@@ -69,7 +69,7 @@ public class BidsService {
   }
 
   private User payForBid(User user) {
-    user.setBalance(user.getBalance().subtract(BID_PRICE));
+    user.setBalance(user.getBalance().subtract(bidPrice));
     return usersRepository.save(user);
   }
 

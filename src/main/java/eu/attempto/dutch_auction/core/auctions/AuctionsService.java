@@ -93,23 +93,23 @@ public class AuctionsService {
     return auctionsRepository.save(auction);
   }
 
-  private ZonedDateTime calculateNewEndTime(ZonedDateTime end_time) {
-    var FIVE_MIN = 300_000;
-    var TWO_AND_A_HALF_MIN = 150_000;
-    var ONE_MIN = 60_000;
+  private ZonedDateTime calculateNewEndTime(ZonedDateTime endTime) {
+    var fiveMinutes = 300_000;
+    var twoAndHalfMinutes = 150_000;
+    var oneMin = 60_000;
 
-    long timeDiff = ChronoUnit.MILLIS.between(ZonedDateTime.now(), end_time);
-    if (timeDiff <= FIVE_MIN && timeDiff > TWO_AND_A_HALF_MIN) {
+    long timeDiff = ChronoUnit.MILLIS.between(ZonedDateTime.now(), endTime);
+    if (timeDiff <= fiveMinutes && timeDiff > twoAndHalfMinutes) {
       return ZonedDateTime.now().plusMinutes(5);
     }
-    if (timeDiff <= TWO_AND_A_HALF_MIN && timeDiff > ONE_MIN) {
+    if (timeDiff <= twoAndHalfMinutes && timeDiff > oneMin) {
       return ZonedDateTime.now().plusMinutes(2).plusSeconds(30);
     }
-    if (timeDiff <= ONE_MIN) {
+    if (timeDiff <= oneMin) {
       return ZonedDateTime.now().plusMinutes(1);
     }
 
-    return end_time;
+    return endTime;
   }
 
   public void changeAuction(ChangeAuctionDto changeAuctionDto) {

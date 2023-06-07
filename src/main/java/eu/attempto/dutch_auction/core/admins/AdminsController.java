@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RolesAllowed("Admin")
+@RolesAllowed("ADMIN")
 @Tag(name = "Admins")
 @RequestMapping("/admins")
 public class AdminsController {

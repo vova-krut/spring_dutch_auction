@@ -44,7 +44,7 @@ public class SchedulesService {
 
     var scheduledTask = taskScheduler.schedule(callback, startTime.toInstant());
 
-    scheduledTasks.put(auction.getId() + "-" + ScheduleType.Start, scheduledTask);
+    scheduledTasks.put(auction.getId() + "-" + ScheduleType.START, scheduledTask);
   }
 
   public void scheduleAuctionFinish(Auction auction, @Nullable User user) {
@@ -60,7 +60,7 @@ public class SchedulesService {
     var endTime = auction.getEndTime().toInstant();
     var scheduledTask = taskScheduler.schedule(callback, endTime);
 
-    scheduledTasks.put(auction.getId() + "-" + ScheduleType.Finish, scheduledTask);
+    scheduledTasks.put(auction.getId() + "-" + ScheduleType.FINISH, scheduledTask);
   }
 
   public void removeAuctionSchedule(Long auctionId, ScheduleType type) {
@@ -116,7 +116,6 @@ public class SchedulesService {
   private String deactivateExpiredAuctions() {
     var expiredAuctions = getExpiredAuctions();
     for (var expiredAuction : expiredAuctions) {
-      System.out.println("Deactivating auction with id" + expiredAuction.getId());
       expiredAuction.setActive(false);
       this.auctionsRepository.save(expiredAuction);
     }

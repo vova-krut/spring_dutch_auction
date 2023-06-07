@@ -63,7 +63,7 @@ public class GlobalControllerExceptionHandler {
     ex.getBindingResult()
         .getAllErrors()
         .forEach(
-            (error) -> {
+            error -> {
               String fieldName = ((FieldError) error).getField();
               String errorMessage = error.getDefaultMessage();
               errors.put(fieldName, errorMessage);
@@ -85,7 +85,7 @@ public class GlobalControllerExceptionHandler {
     var errors = new HashMap<String, String>();
     ex.getConstraintViolations()
         .forEach(
-            (error) -> {
+            error -> {
               var fieldName = error.getPropertyPath().toString();
               var errorMessage = error.getMessage();
               errors.put(fieldName, errorMessage);

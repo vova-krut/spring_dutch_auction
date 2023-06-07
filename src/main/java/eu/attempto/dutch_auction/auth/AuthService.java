@@ -21,7 +21,7 @@ public class AuthService {
   private final JwtService jwtService;
   private final PasswordEncoder encoder;
 
-  public AuthResponse registration(RegistrationDto registrationDto, Boolean admin) {
+  public AuthResponse registration(RegistrationDto registrationDto, boolean admin) {
     var candidate = usersService.findByEmail(registrationDto.getEmail());
     if (candidate.isPresent()) {
       throw new BadRequestException("User with this email already exists");
