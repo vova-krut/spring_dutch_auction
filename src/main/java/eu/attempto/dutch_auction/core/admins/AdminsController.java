@@ -24,7 +24,7 @@ public class AdminsController {
   }
 
   @PatchMapping("/auctions")
-  public String changeAuction(ChangeAuctionDto changeAuctionDto) {
+  public String changeAuction(@Valid @RequestBody ChangeAuctionDto changeAuctionDto) {
     return adminsService.changeAuction(changeAuctionDto);
   }
 }
