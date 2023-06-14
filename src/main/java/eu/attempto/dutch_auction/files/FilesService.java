@@ -63,7 +63,11 @@ public class FilesService {
   }
 
   private String getFileExtension(String fileName) {
-    int dotIndex = fileName.lastIndexOf(".");
-    return (dotIndex != -1) ? fileName.substring(dotIndex) : "";
+    var dotIndex = fileName.lastIndexOf(".");
+    if (dotIndex == -1) {
+      throw new BadRequestException("File does not have extension");
+    }
+
+    return fileName.substring(dotIndex);
   }
 }

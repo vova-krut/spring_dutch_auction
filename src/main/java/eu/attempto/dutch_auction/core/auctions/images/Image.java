@@ -16,7 +16,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(indexes = @Index(columnList = "auctionId"))
+@Table(
+    indexes = @Index(columnList = "auctionId"),
+    uniqueConstraints = @UniqueConstraint(columnNames = "link"))
 public class Image {
   @Id @GeneratedValue private Long id;
 

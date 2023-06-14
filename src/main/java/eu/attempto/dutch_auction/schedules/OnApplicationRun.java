@@ -18,7 +18,7 @@ public class OnApplicationRun implements ApplicationRunner {
   private final Logger logger = LoggerFactory.getLogger(OnApplicationRun.class);
 
   @Override
-  public void run(ApplicationArguments args) throws Exception {
+  public void run(ApplicationArguments args) {
     try {
       authService.registration(
           RegistrationDto.builder()

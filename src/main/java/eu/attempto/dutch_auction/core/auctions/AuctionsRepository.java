@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface AuctionsRepository extends JpaRepository<Auction, Long> {
-  Auction[] deleteByAuthor(User author);
+  List<Auction> deleteByAuthor(User author);
 
   List<Auction> findByActiveTrueAndEndTimeAfter(ZonedDateTime dateTime);
 

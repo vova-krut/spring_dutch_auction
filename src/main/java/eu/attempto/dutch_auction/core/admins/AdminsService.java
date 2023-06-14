@@ -20,8 +20,6 @@ public class AdminsService {
   }
 
   public String changeAuction(ChangeAuctionDto changeAuctionDto) {
-    auctionsService.changeAuction(changeAuctionDto);
-
-    return "OK";
+    return auctionsService.changeAuction(changeAuctionDto);
   }
 }
