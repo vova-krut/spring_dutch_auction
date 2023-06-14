@@ -73,11 +73,9 @@ public class SchedulesService {
   }
 
   public void onApplicationStart() {
-    CompletableFuture<String> future1 = CompletableFuture.supplyAsync(this::scheduleActiveAuctions);
-    CompletableFuture<String> future2 =
-        CompletableFuture.supplyAsync(this::scheduleStartingAuctions);
-    CompletableFuture<String> future3 =
-        CompletableFuture.supplyAsync(this::deactivateExpiredAuctions);
+    var future1 = CompletableFuture.supplyAsync(this::scheduleActiveAuctions);
+    var future2 = CompletableFuture.supplyAsync(this::scheduleStartingAuctions);
+    var future3 = CompletableFuture.supplyAsync(this::deactivateExpiredAuctions);
     // Wait for all tasks to complete
     CompletableFuture.allOf(future1, future2, future3).join();
   }
@@ -97,7 +95,11 @@ public class SchedulesService {
   }
 
   private Optional<Bid> findLastBid(Auction auction) {
-    return bidsRepository.findByAuctionOrderByCreatedAtDesc(auction);
+    var bids = bidsRepository.findByAuctionOrderByCreatedAtDesc(auction);
+    if (bids.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(bids.get(0));
   }
 
   private String scheduleStartingAuctions() {
@@ -117,7 +119,7 @@ public class SchedulesService {
     var expiredAuctions = getExpiredAuctions();
     for (var expiredAuction : expiredAuctions) {
       expiredAuction.setActive(false);
-      this.auctionsRepository.save(expiredAuction);
+      auctionsRepository.save(expiredAuction);
     }
 
     return "OK";
@@ -142,10 +144,8 @@ public class SchedulesService {
     user.setBalance(user.getBalance().subtract(totalSum));
     auction.getAuthor().setBalance(auction.getAuthor().getBalance().add(totalSum));
 
-    CompletableFuture<User> future1 =
-        CompletableFuture.supplyAsync(() -> usersRepository.save(user));
-    CompletableFuture<User> future2 =
-        CompletableFuture.supplyAsync(() -> usersRepository.save(auction.getAuthor()));
+    var future1 = CompletableFuture.supplyAsync(() -> usersRepository.save(user));
+    var future2 = CompletableFuture.supplyAsync(() -> usersRepository.save(auction.getAuthor()));
 
     // Wait for all tasks to complete
     CompletableFuture.allOf(future1, future2).join();

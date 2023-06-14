@@ -12,8 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
-import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -29,15 +30,11 @@ public class JwtService {
   }
 
   public String createToken(Long id) {
-    final var FIFTEEN_MIN = 900_000;
-    var now = new Date();
-    var validity = new Date(now.getTime() + FIFTEEN_MIN);
-
     var algorithm = Algorithm.HMAC256(secretKey);
     return JWT.create()
         .withSubject(id.toString())
-        .withIssuedAt(now)
-        .withExpiresAt(validity)
+        .withIssuedAt(Instant.now())
+        .withExpiresAt(Instant.now().plus(15, ChronoUnit.MINUTES))
         .sign(algorithm);
   }
 

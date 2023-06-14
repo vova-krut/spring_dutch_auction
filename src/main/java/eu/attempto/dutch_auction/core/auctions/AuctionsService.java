@@ -11,7 +11,7 @@ import eu.attempto.dutch_auction.schedules.SchedulesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -30,12 +31,10 @@ public class AuctionsService {
   private final EventsService eventsService;
 
   public Auction createAuction(
-      Authentication authentication,
-      MultipartFile[] imageFiles,
-      CreateAuctionDto createAuctionDto) {
+      UserDetails userDetails, MultipartFile[] imageFiles, CreateAuctionDto createAuctionDto) {
     var auction =
         Auction.builder()
-            .author((User) authentication.getPrincipal())
+            .author((User) userDetails)
             .title(createAuctionDto.getTitle())
             .description(createAuctionDto.getDescription())
             .endTime(createAuctionDto.getEndTime())
@@ -68,7 +67,7 @@ public class AuctionsService {
     return auctionsRepository.findAll(pageable);
   }
 
-  public Auction[] deleteUserAuctions(User user) {
+  public List<Auction> deleteUserAuctions(User user) {
     return auctionsRepository.deleteByAuthor(user);
   }
 
@@ -94,29 +93,31 @@ public class AuctionsService {
   }
 
   private ZonedDateTime calculateNewEndTime(ZonedDateTime endTime) {
-    var fiveMinutes = 300_000;
-    var twoAndHalfMinutes = 150_000;
-    var oneMin = 60_000;
+    final var FIVE_MINUTES = 300_000;
+    final var TWO_AND_A_HALF_MINUTES = 150_000;
+    final var ONE_MINUTE = 60_000;
 
     long timeDiff = ChronoUnit.MILLIS.between(ZonedDateTime.now(), endTime);
-    if (timeDiff <= fiveMinutes && timeDiff > twoAndHalfMinutes) {
+    if (timeDiff <= FIVE_MINUTES && timeDiff > TWO_AND_A_HALF_MINUTES) {
       return ZonedDateTime.now().plusMinutes(5);
     }
-    if (timeDiff <= twoAndHalfMinutes && timeDiff > oneMin) {
+    if (timeDiff <= TWO_AND_A_HALF_MINUTES && timeDiff > ONE_MINUTE) {
       return ZonedDateTime.now().plusMinutes(2).plusSeconds(30);
     }
-    if (timeDiff <= oneMin) {
+    if (timeDiff <= ONE_MINUTE) {
       return ZonedDateTime.now().plusMinutes(1);
     }
 
     return endTime;
   }
 
-  public void changeAuction(ChangeAuctionDto changeAuctionDto) {
+  public String changeAuction(ChangeAuctionDto changeAuctionDto) {
     var auction = getAuctionById(changeAuctionDto.getId());
     auction.setPrice(changeAuctionDto.getPrice());
 
     eventsService.addEvent(auction);
     auctionsRepository.save(auction);
+
+    return "OK";
   }
 }

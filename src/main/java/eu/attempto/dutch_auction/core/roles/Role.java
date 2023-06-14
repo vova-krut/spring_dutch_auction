@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -16,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(indexes = @Index(columnList = "name"))
-public class Role {
+public class Role implements Serializable {
   @Id @GeneratedValue private Long id;
 
   @Enumerated(EnumType.STRING)

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,7 @@ public class AuctionsController {
       @Valid @RequestParam("price") @Positive BigDecimal price,
       @RequestParam("images") MultipartFile[] imageFiles) {
     return auctionsService.createAuction(
-        authentication,
+        (UserDetails) authentication.getPrincipal(),
         imageFiles,
         buildCreateAuctionDto(title, description, startTime, endTime, price));
   }

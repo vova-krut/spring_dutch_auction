@@ -10,10 +10,11 @@ import eu.attempto.dutch_auction.exceptions.BadRequestException;
 import eu.attempto.dutch_auction.schedules.ScheduleType;
 import eu.attempto.dutch_auction.schedules.SchedulesService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,19 +29,18 @@ public class BidsService {
 
   private final BigDecimal bidPrice = new BigDecimal(1);
 
-  public String placeBid(Authentication authentication, PlaceBidDto placeBidDto) {
+  public String placeBid(UserDetails userDetails, PlaceBidDto placeBidDto) {
+    var user = (User) userDetails;
     var auction = auctionsService.getAuctionById(placeBidDto.getAuctionId());
-    var user = (User) authentication.getPrincipal();
 
     validateBid(user, auction);
     schedulesService.removeAuctionSchedule(auction.getId(), ScheduleType.FINISH);
 
     var bid = Bid.builder().user(user).auction(auction).build();
 
-    CompletableFuture<User> future1 = CompletableFuture.supplyAsync(() -> payForBid(user));
-    CompletableFuture<Auction> future2 =
-        CompletableFuture.supplyAsync(() -> auctionsService.placeBid(auction));
-    CompletableFuture<Bid> future3 = CompletableFuture.supplyAsync(() -> bidsRepository.save(bid));
+    var future1 = CompletableFuture.supplyAsync(() -> payForBid(user));
+    var future2 = CompletableFuture.supplyAsync(() -> auctionsService.placeBid(auction));
+    var future3 = CompletableFuture.supplyAsync(() -> bidsRepository.save(bid));
 
     // Wait for all tasks to complete
     CompletableFuture.allOf(future1, future2, future3).join();
@@ -60,7 +60,7 @@ public class BidsService {
       throw new BadRequestException("You can't bid on your own auction");
     }
 
-    BigDecimal comparisonValue = auction.getPrice().multiply(new BigDecimal(2)).add(bidPrice);
+    var comparisonValue = auction.getPrice().multiply(new BigDecimal(2)).add(bidPrice);
 
     if (user.getBalance().compareTo(comparisonValue) < 0) {
       throw new BadRequestException(
@@ -73,11 +73,11 @@ public class BidsService {
     return usersRepository.save(user);
   }
 
-  public Bid[] getUserBids(User user) {
-    return bidsRepository.findByUser(user);
+  public List<Bid> getUserBids(UserDetails userDetails) {
+    return bidsRepository.findByUser((User) userDetails);
   }
 
-  public Bid[] deleteUserBids(User user) {
+  public List<Bid> deleteUserBids(User user) {
     return bidsRepository.deleteByUser(user);
   }
 }

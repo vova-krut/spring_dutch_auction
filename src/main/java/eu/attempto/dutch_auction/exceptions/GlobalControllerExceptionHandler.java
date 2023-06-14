@@ -22,24 +22,6 @@ public class GlobalControllerExceptionHandler {
         .build();
   }
 
-  @ExceptionHandler(UnauthorizedException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public HttpErrorResponse handleUnauthorized(UnauthorizedException ex) {
-    return HttpErrorResponse.builder()
-        .statusCode(HttpStatus.UNAUTHORIZED.value())
-        .message(ex.getMessage())
-        .build();
-  }
-
-  @ExceptionHandler(ForbiddenException.class)
-  @ResponseStatus(HttpStatus.FORBIDDEN)
-  public HttpErrorResponse handleForbidden(ForbiddenException ex) {
-    return HttpErrorResponse.builder()
-        .statusCode(HttpStatus.FORBIDDEN.value())
-        .message(ex.getMessage())
-        .build();
-  }
-
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(InternalServerException.class)
   public HttpErrorResponse httpInternalError(InternalServerException ex) {

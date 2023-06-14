@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +18,8 @@ public class UsersController {
   private final UsersService usersService;
 
   @GetMapping("/me")
-  public User getMe(Authentication authentication) {
-    return (User) authentication.getPrincipal();
+  public UserDetails getMe(Authentication authentication) {
+    return (UserDetails) authentication.getPrincipal();
   }
 
   @GetMapping
@@ -28,12 +29,12 @@ public class UsersController {
 
   @DeleteMapping("/me")
   public String deleteMe(Authentication authentication) {
-    return usersService.deleteMe(authentication);
+    return usersService.deleteMe((UserDetails) authentication.getPrincipal());
   }
 
   @PostMapping("/coins")
   public String buyCoins(
       Authentication authentication, @Valid @RequestBody BuyCoinsDto buyCoinsDto) {
-    return usersService.buyCoins(authentication, buyCoinsDto);
+    return usersService.buyCoins((UserDetails) authentication.getPrincipal(), buyCoinsDto);
   }
 }

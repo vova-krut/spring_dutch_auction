@@ -4,8 +4,6 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: dutch_auction
-    ports:
-      - "5432:5432"
   app:
     build: .
     depends_on:
