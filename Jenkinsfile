@@ -15,16 +15,10 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
-            steps {
-                echo "Building.."
-                sh './mvnw install'
-            }
-        }
         stage('Scan') {
             steps {
                 withSonarQubeEnv(installationName: 'sq1') {
-                    sh './mvnw clean sonar:sonar'
+                    sh './mvnw clean verify sonar:sonar'
                 }
             }
         }
@@ -33,6 +27,12 @@ pipeline {
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
+            }
+        }
+        stage('Build') {
+            steps {
+                echo "Building.."
+                sh './mvnw install -DskipTests'
             }
         }
         stage('Run') {
